@@ -11,7 +11,7 @@ Add-Type -AssemblyName presentationframework
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PowerShellGUI"
-        Title="Simple calendar rights GUI" Height="433" Width="603">
+        Title="Simple calendar rights GUI, mechhvac" Height="433" Width="603">
     <Grid Margin="10,0,0,0" RenderTransformOrigin="0.531,0.507" HorizontalAlignment="Left" Width="563">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -64,10 +64,7 @@ $buttonGet.Add_Click({
         if (-NOT ([string]::IsNullOrEmpty($textBox.Text))){
             Write-Host "Getting the calendar permissions.."
             #$outputTextBox.Text = getCalendarData
-            $dataGrid.clear()
-            $dataGrid.ItemsSource = getCalendarData
-            $dataGrid.IsReadOnly = $true
-            
+            refreshDataGrid            
             $labelCalendarPath.Content = getCalendarFolder
         }
     }catch{
@@ -83,27 +80,31 @@ $buttonSet.Add_Click({
             $calendarData = getCalendarData | Out-String
             Write-Host $calendarData
             Write-Host $textBoxUser.Text
-            [bool]$contains = $calendarData.contains($textBoxUser.Text)
-            
+            [bool]$contains = $calendarData.contains($textBoxUser.Text)            
             Write-Host $($contains)
             
             if($contains){
                 $folder = getCalendarFolder
                 Set-MailboxFolderPermission $($folder) -User $textBoxUser.Text -AccessRights $combobox.SelectedItem
-                #$outputTextBox.Text = getCalendarData
+                refreshDataGrid
                 Write-Host "Setting..."
             }else{
                 $folder = getCalendarFolder
                 Add-MailboxFolderPermission $($folder) -User $textBoxUser.Text -AccessRights $combobox.SelectedItem
-                #$outputTextBox.Text = getCalendarData
+                refreshDataGrid
                 Write-Host "Adding..."
             }
         }else {
-            Write-Host "Booo!"
+            Write-Host "wtf"
         }
     }catch{
         Write-Warning $_
     }
+})
+
+$dataGrid.Add_MouseDoubleClick({
+        $selectedItem = $dataGrid.SelectedItems
+        $textBoxUser.Text = $selectedItem.User    
 })
 
 #endregion Events
@@ -121,6 +122,12 @@ function getCalendarData{
     $folder = getCalendarFolder
     $calendarData = Get-MailboxFolderPermission $($folder) | Select-Object foldername, user, @{name="AccessRights";expression={ [string]::join(",",@($_.accessrights)) }}
     $calendarData
+}
+
+function refreshDataGrid{
+    $dataGrid.clear()
+    $dataGrid.ItemsSource = getCalendarData
+    $dataGrid.IsReadOnly = $true
 }
 #
 
