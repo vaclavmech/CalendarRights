@@ -4,6 +4,9 @@
 # add support for WPF
 Add-Type -AssemblyName presentationframework
 
+# add Exchange cmdlets
+Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
+
 #region GUI
 [xml]$xaml = @"
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
