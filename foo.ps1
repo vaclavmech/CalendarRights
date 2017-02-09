@@ -1,6 +1,10 @@
 # Václav Měch
 # Tieto
 
+# Disclaimer:   I created this script from my own will and in my free time and I don't feel obligated to fix / maintain it.
+#               However, I will most likely fix any reported bugs, or implement functions that might improve it. I just don't feel obligated to do so.
+#               Any bugs / improvements can be sent to my email vaclav.mech@tieto.com
+
 Write-Host "Loading stuff.."
 
 # add support for WPF
