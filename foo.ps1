@@ -42,7 +42,7 @@ Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
 "@
 $reader=(New-Object System.Xml.XmlNodeReader $xaml)
 
-$Window=[Windows.Markup.XamlReader]::Load($reader)
+$window=[Windows.Markup.XamlReader]::Load($reader)
 
 #endregion GUI
 
@@ -147,7 +147,7 @@ function processCalendarData{
         $object | Add-Member -Name 'FolderName' -MemberType Noteproperty -Value $temp.foldername
         $object | Add-Member -Name 'User' -MemberType Noteproperty -Value $temp.user
         $object | Add-Member -Name 'AccessRights' -MemberType Noteproperty -Value $temp.AccessRights
-        
+
         if ($object.User -notlike "Default" -and $object.User -notlike "Anonymous"){
             [string]$bar = $object.User
             $object | Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
