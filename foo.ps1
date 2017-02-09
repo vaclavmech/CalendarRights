@@ -149,6 +149,8 @@ function processCalendarData{
         if ($object.User -notlike "Default" -and $object.User -notlike "Anonymous"){
             [string]$bar = $object.User
             $object | Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
+        }else {
+            $object |Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value "Built-in object"
         }
         $array += $object   
     }
