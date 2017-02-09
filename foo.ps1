@@ -1,4 +1,4 @@
-# mechhvac
+# Václav Měch
 # Tieto
 
 # add support for WPF
@@ -138,6 +138,7 @@ function getCalendarData{
     $calendarData
 }
 
+# returns an array with custom objects (to include the recipient type)
 function processCalendarData{
     $calendarData = getCalendarData
     $array = @()
@@ -146,6 +147,7 @@ function processCalendarData{
         $object | Add-Member -Name 'FolderName' -MemberType Noteproperty -Value $temp.foldername
         $object | Add-Member -Name 'User' -MemberType Noteproperty -Value $temp.user
         $object | Add-Member -Name 'AccessRights' -MemberType Noteproperty -Value $temp.AccessRights
+        
         if ($object.User -notlike "Default" -and $object.User -notlike "Anonymous"){
             [string]$bar = $object.User
             $object | Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
