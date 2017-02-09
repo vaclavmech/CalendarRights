@@ -1,11 +1,16 @@
 # Václav Měch
 # Tieto
 
+Write-Host "Loading stuff.."
+
 # add support for WPF
 Add-Type -AssemblyName presentationframework
 
 # add Exchange cmdlets
 Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
+
+# support for multiple domains
+Set-AdServerSettings -ViewEntireForest $true
 
 #region GUI
 [xml]$xaml = @"
@@ -144,15 +149,15 @@ function processCalendarData{
     $array = @()
     foreach ($temp in $calendarData){
         $object = New-Object -TypeName PSObject
-        $object | Add-Member -Name 'FolderName' -MemberType Noteproperty -Value $temp.foldername
-        $object | Add-Member -Name 'User' -MemberType Noteproperty -Value $temp.user
-        $object | Add-Member -Name 'AccessRights' -MemberType Noteproperty -Value $temp.AccessRights
+        $object | Add-Member -Name "FolderName" -MemberType Noteproperty -Value $temp.foldername
+        $object | Add-Member -Name "User" -MemberType Noteproperty -Value $temp.user
+        $object | Add-Member -Name "AccessRights" -MemberType Noteproperty -Value $temp.AccessRights
 
         if ($object.User -notlike "Default" -and $object.User -notlike "Anonymous"){
             [string]$bar = $object.User
-            $object | Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
+            $object | Add-Member -Name "RecipientType" -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
         }else {
-            $object |Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value "Built-in object"
+            $object |Add-Member -Name "RecipientType" -MemberType Noteproperty -Value "Built-in object"
         }
         $array += $object   
     }
