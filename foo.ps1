@@ -34,6 +34,7 @@ Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn
                     <DataGridTextColumn Header="Folder name" Binding="{Binding FolderName}"/>
                     <DataGridTextColumn Header="User" Binding="{Binding User}"/>
                     <DataGridTextColumn Header="Access rights" Binding="{Binding AccessRights}"/>
+                    <DataGridTextColumn Header="Recipient type" Binding="{Binding RecipientType}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -137,10 +138,27 @@ function getCalendarData{
     $calendarData
 }
 
+function processCalendarData{
+    $calendarData = getCalendarData
+    $array = @()
+    foreach ($temp in $calendarData){
+        $object = New-Object -TypeName PSObject
+        $object | Add-Member -Name 'FolderName' -MemberType Noteproperty -Value $temp.foldername
+        $object | Add-Member -Name 'User' -MemberType Noteproperty -Value $temp.user
+        $object | Add-Member -Name 'AccessRights' -MemberType Noteproperty -Value $temp.AccessRights
+        if ($object.User -notlike "Default" -and $object.User -notlike "Anonymous"){
+            [string]$bar = $object.User
+            $object | Add-Member -Name 'RecipientType' -MemberType Noteproperty -Value $(Get-Recipient $bar | select -ExpandProperty recipienttypedetails) 
+        }
+        $array += $object   
+    }
+    $array
+}
+
 # gets the data using the textbox info and refreshes the datagrid
 function refreshDataGrid{
     $dataGrid.clear()
-    $dataGrid.ItemsSource = getCalendarData
+    $dataGrid.ItemsSource = processCalendarData
     $dataGrid.IsReadOnly = $true
 }
 #
