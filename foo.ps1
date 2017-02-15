@@ -5,7 +5,7 @@
 #               However, I will most likely fix any reported bugs, or implement functions that might improve it. I just don't feel like I have to.
 #               Any bugs / improvements can be sent to my email vaclav.mech@tieto.com
 
-Write-Host "Loading stuff.."
+Write-Output "Loading stuff.."
 
 # add support for WPF
 Add-Type -AssemblyName presentationframework
@@ -78,7 +78,7 @@ $comboBox.SelectedIndex = 0
 $buttonGet.Add_Click({
     try{
         if (-NOT ([string]::IsNullOrEmpty($textBox.Text))){
-            Write-Host "Getting the calendar permissions.."
+            Write-Output "Getting the calendar permissions.."
             refreshDataGrid            
             $labelCalendarPath.Content = getCalendarFolder
         }
@@ -91,30 +91,30 @@ $buttonGet.Add_Click({
 $buttonSet.Add_Click({
     try{
         if (-NOT ([string]::IsNullOrEmpty($textBoxUser.Text))){
-            Write-Host "Setting the calendar permissions.."
+            Write-Output "Setting the calendar permissions.."
             # get calendar data as string for easier comparing
             $calendarData = getCalendarData | Out-String
-            Write-Host $calendarData
-            Write-Host $textBoxUser.Text
+            Write-Output $calendarData
+            Write-Output $textBoxUser.Text
             # check if the user already has calendar permissions
             [bool]$contains = $calendarData.contains($textBoxUser.Text)            
-            Write-Host $($contains)
+            Write-Output $($contains)
             
             # if so, modify them
             if($contains){
                 $folder = getCalendarFolder
                 Set-MailboxFolderPermission $($folder) -User $textBoxUser.Text -AccessRights $combobox.SelectedItem
                 refreshDataGrid
-                Write-Host "Setting..."
+                Write-Output "Setting..."
             # if not, add them
             }else{
                 $folder = getCalendarFolder
                 Add-MailboxFolderPermission $($folder) -User $textBoxUser.Text -AccessRights $combobox.SelectedItem
                 refreshDataGrid
-                Write-Host "Adding..."
+                Write-Output "Adding..."
             }
         }else {
-            Write-Host "wtf"
+            Write-Output "wtf"
         }
     }catch{
         Write-Warning $_
